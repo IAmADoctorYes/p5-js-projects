@@ -12,24 +12,23 @@ function setup() {
 
 function draw() {
   background(255);
-  if (live.length > 0) {
-    for(var i = 0; i < live.length; i++) {
-      live[i].update(i);
-      live[i].show();
-    }
+  for (var i = 0; i < 100; i++) {
+    live.map(function(curr,i) {
+      curr.update(i);
+    })
   }
-  for(var i = 0; i < dead.length ; i++) {
-    dead[i].show();
-  }
+  dead.map(function(curr) {
+    curr.show();
+  })
 }
 
 function particle(x,y,l) {
   this.x = x;
   this.y = y;
   this.l = l;
-  this.speed = 5;
   this.c = 200;
   this.s =50;
+  this.speed = 5;
 }
 
 particle.prototype.update = function(dex) {
