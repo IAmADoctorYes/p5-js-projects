@@ -41,7 +41,7 @@ network.prototype.show = function() {
 function object(x,y) {
   this.dna = [x,y];
   this.mutation = 10;
-  this.fitness = this.calculateFitness()/25;
+  this.fitness = round(this.calculateFitness()/100);
 }
 
 object.prototype.mutate = function() {
@@ -77,4 +77,3 @@ object.prototype.show = function() {
   strokeWeight(5);
   point(this.dna[0],this.dna[1]);
 }
-
