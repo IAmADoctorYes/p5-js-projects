@@ -1,0 +1,40 @@
+var rain = [];
+
+function setup() {
+	createCanvas(windowWidth,windowHeight);
+	colorMode(HSB);
+	for (var i = 0; i < 500; i++) {
+		rain.push(new droplet());
+	}
+}
+
+
+
+function draw() {
+	background(0);
+	rain.map(function(curr,i) {
+		curr.update(i);
+	}
+	)
+}
+
+function droplet() {
+	this.x = random(width);
+	this.z = random(10,100);
+	this.width = this.z * 0.1;
+	this.height = this.z * 0.5;
+	this.y = -this.height;
+	this.speed = 0.1 * this.z;
+}
+
+droplet.prototype.update = function(index) {
+	if(this.y > height) {
+		rain.splice(index,1);
+		rain.push(new droplet());
+	} else {
+		this.y += this.speed;
+		noStroke();
+		fill(this.y % 355,100,100);
+		rect(this.x,this.y,this.width,this.height);
+	}
+}
