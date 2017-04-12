@@ -1,0 +1,24 @@
+var radius;
+var angle;
+var resolution;
+function setup() {
+  colorMode(HSB);
+  createCanvas(windowWidth,windowHeight);
+  background(0);
+  radius = height/2-50;
+  angle = 0;
+  resolution = 11
+}
+
+/*
+resolution = 11 = square
+resolution = 21 = triangle
+*/
+
+function draw() {
+  resolution = 0.01;
+  stroke(frameCount % 355,100,100)
+  strokeWeight(50)
+  line(cos(angle)*radius+(width/2),sin(angle)*radius+(height/2),cos(angle+resolution)*radius+(width/2),sin(angle+resolution)*radius+(height/2));
+  angle += resolution
+}
