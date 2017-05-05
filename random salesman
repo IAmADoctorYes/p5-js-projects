@@ -1,25 +1,23 @@
 var current = [];
 var base = [];
 var best = [];
+var prev = [];
 function setup() {
 	createCanvas(windowWidth,windowHeight);
 	background(255);
-	for(var i = 0; i < 5; i++) {
-		base.push([Math.round(random(width)),Math.round(random(height))]);
+	for(var i = 0; i < 10; i++) {
+		base.push([round(random(width)),round(random(height))]);
 	}
-	best = base;
-	current = base;
+	best = base.slice(0);
+	current = base.slice(0);
+	console.log(best==current);
 }
-
-
 
 function draw() {
 	background(255);
 	show();
 	mutate(current);
-	mutate(best);
 	check();
-	console.log(calcLength(best) == calcLength(current));
 }
 
 function mutate(list) {
@@ -42,6 +40,7 @@ function show() {
 	for(var i = 0; i < best.length-1; i++) {
 		line(best[i][0],best[i][1],best[i+1][0],best[i+1][1]);
 	}
+	console.log(best==current);
 }
 
 function calcLength(list) {
@@ -50,10 +49,12 @@ function calcLength(list) {
 		len += dist(list[i][0],list[i][1],list[i+1][0],list[i+1][1]);
 	}
 	return len;
+	console.log(best==current);
 }
 
 function check() {
 	if(calcLength(current) < calcLength(best)) {
-		best = current;
+		best = current.slice(0);
 	}
+	console.log(best==current);
 }
