@@ -1,0 +1,60 @@
+var current = [];
+var best = [];
+function setup() {
+	createCanvas(windowWidth,windowHeight);
+	background(255);
+	for(var i = 0; i < 3; i++) {
+		current.push([Math.round(random(width)),Math.round(random(height))]);
+	}
+	var mutation = current;
+	for(var i = 0; i < 10; i++) {
+		mutate(mutation);
+	}
+	best = mutation;
+}
+
+
+
+function draw() {
+	background(255);
+	show();
+	mutate();
+	check();
+	console.log(calcLength(best) < calcLength(current));
+}
+
+function mutate() {
+	var var1 = floor(random(current.length));
+	var var2 = floor(random(current.length));
+	var x = current[var1];
+	var y = current[var2];
+	current[var1] = y;
+	current[var2] = x;
+}
+
+function show() {
+	stroke(255,0,0);
+	strokeWeight(5);
+	for(var i = 0; i < current.length-1; i++) {
+		line(current[i][0],current[i][1],current[i+1][0],current[i+1][1]);
+	}
+	stroke(0,255,0);
+	strokeWeight(2);
+	for(var i = 0; i < best.length-1; i++) {
+		line(best[i][0],best[i][1],best[i+1][0],best[i+1][1]);
+	}
+}
+
+function calcLength(list) {
+	var length = 0;
+	for(var i = 0; i < list.length-1; i++) {
+		length += dist(list[i][0],list[i][1],list[i+1][0],list[i+1][1]);
+	}
+	return length;
+}
+
+function check() {
+	if(calcLength(current) < calcLength(best)) {
+		best = current;
+	}
+}
