@@ -10,14 +10,15 @@ function setup() {
 	}
 	best = base.slice(0);
 	current = base.slice(0);
-	console.log(best==current);
 }
 
 function draw() {
 	background(255);
 	show();
-	mutate(current);
-	check();
+  for(var i = 0; i < 1000; i++) {
+  	mutate(current);
+  	check();
+  }
 }
 
 function mutate(list) {
@@ -30,17 +31,16 @@ function mutate(list) {
 }
 
 function show() {
-	stroke(255,0,0);
+	stroke(200);
 	strokeWeight(5);
 	for(var i = 0; i < current.length-1; i++) {
 		line(current[i][0],current[i][1],current[i+1][0],current[i+1][1]);
 	}
-	stroke(0,255,0);
+	stroke(0);
 	strokeWeight(2);
 	for(var i = 0; i < best.length-1; i++) {
 		line(best[i][0],best[i][1],best[i+1][0],best[i+1][1]);
 	}
-	console.log(best==current);
 }
 
 function calcLength(list) {
@@ -49,12 +49,11 @@ function calcLength(list) {
 		len += dist(list[i][0],list[i][1],list[i+1][0],list[i+1][1]);
 	}
 	return len;
-	console.log(best==current);
 }
 
 function check() {
 	if(calcLength(current) < calcLength(best)) {
-		best = current.slice(0);
+    best = current.slice(0);
+    console.log(calcLength(best));
 	}
-	console.log(best==current);
 }
