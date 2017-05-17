@@ -1,0 +1,26 @@
+var img;
+var weight = 5;
+var x;
+var y;
+var loc;
+
+function preload() {
+	img = loadImage('doggo.jpg');
+}
+
+function setup() {
+	createCanvas(img.width,img.height);
+	img.loadPixels();
+	strokeWeight(weight);
+}
+
+function draw() {
+	img.loadPixels();
+	for(var i = 0; i < 100; i++) {
+	x = floor(random(img.width));
+	y = floor(random(img.height));
+	loc = (x + y*width)*4;
+	stroke(img.pixels[loc],img.pixels[loc+1],img.pixels[loc+2]);
+	point(x,y);
+	}
+}
