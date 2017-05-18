@@ -1,0 +1,33 @@
+var img;
+var weight = 10;
+var x;
+var y;
+var loc;
+var size;
+
+function preload() {
+	img = createCapture(VIDEO);
+  //img = createVideo('Comp 1_1.avi')
+  img.hide()
+  //img.loop()
+}
+
+function setup() {
+	createCanvas(640,480);
+	strokeWeight(weight);
+  noStroke();
+}
+
+function draw() {
+  background(0);
+	img.loadPixels();
+	for(var x = 0; x < width; x += weight) {
+    for(var y = 0; y < height; y += weight) {
+    	loc = (y*img.width+(img.width-x))*4;
+    	fill(255);
+      size = map((img.pixels[loc]+img.pixels[loc+1]+img.pixels[loc+2])/3,0,255,0,weight);
+      //size = map(noise(x*0.01+(frameCount*0.1),y*0.02),0,1,weight,0);
+      rect(x+size,y+size,size,size);
+    }
+	}
+}
