@@ -16,10 +16,10 @@ function setup() {
 
 function draw() {
 	img.loadPixels();
-	for(var i = 0; i < 100; i++) {
+	for(var i = 0; i < 1000; i++) {
 	x = floor(random(img.width));
 	y = floor(random(img.height));
-	loc = (x + y*width)*4;
+	loc = (x + y*img.width)*4;
 	stroke(img.pixels[loc],img.pixels[loc+1],img.pixels[loc+2]);
 	point(x,y);
 	}
