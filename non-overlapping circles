@@ -1,0 +1,44 @@
+var circles = [];
+var maxSize;
+var img;
+
+function preload() {
+  img = loadImage('Shrek.jpg');
+}
+
+function setup() {
+  createCanvas(windowWidth,windowHeight);
+  background(0);
+  noStroke();
+  img.loadPixels();
+  maxSize = 15;
+}
+
+function draw() {
+  for(var i = 0; i < 100; i++) {
+    newCircle();
+  }
+}
+
+function newCircle() {
+  var circle = {
+    x: floor(random(width)),
+    y: floor(random(height)),
+    r: floor(random(maxSize))
+  }
+  for(var i = 0; i < circles.length; i++) {
+    var other = circles[i];
+    var overlapping = false;
+    this.d = dist(other.x,other.y,circle.x,circle.y);
+    if((this.d <= (circle.r + other.r))) {
+      overlapping = true;
+      break;
+    }
+  }
+  if(!overlapping) {
+    circles.push(circle);
+    var loc = (circle.x + circle.y*width)*4
+    fill(img.pixels[loc],img.pixels[loc+1],img.pixels[loc+2]);
+    ellipse(circle.x,circle.y,circle.r*2,circle.r*2);
+  }
+}
