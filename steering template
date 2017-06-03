@@ -1,0 +1,60 @@
+var v = [];
+var target;
+
+function setup() {
+  createCanvas(windowWidth,windowHeight);
+  background(0);
+  fill(255);
+  noStroke();
+  for(var i = 0; i < 100; i++) {
+    v.push(new Boid(width/2,height/2));
+  }
+}
+
+function draw() {
+  background(0,10);
+  target = createVector(mouseX,mouseY);
+  for(var i = 0; i < v.length; i++) {
+    v[i].update();
+    v[i].show();
+  }
+}
+
+function Boid(x,y) {
+  this.acceleration = createVector(0,0);
+  this.velocity = createVector(random(-1,1),random(-1,1));
+  this.position = createVector(x,y);
+  this.r = 3.0;
+  this.maxspeed = 3;
+  this.maxforce = 0.05;
+}
+
+Boid.prototype.update = function() {
+  this.seek();
+  this.velocity.add(this.acceleration);
+  this.velocity.limit(this.maxspeed);
+  this.position.add(this.velocity);
+  this.acceleration.mult(0);
+}
+
+Boid.prototype.seek = function() {
+  var desired = p5.Vector.sub(target,this.position);
+  desired.normalize();
+  desired.mult(this.maxspeed);
+  var steer = p5.Vector.sub(desired,this.velocity);
+  steer.limit(this.maxforce);
+  this.acceleration = steer;
+}
+
+Boid.prototype.show = function() {
+  var theta = this.velocity.heading() + radians(90);
+  push();
+  translate(this.position.x,this.position.y);
+  rotate(theta);
+  beginShape();
+  vertex(0, -this.r*2);
+  vertex(-this.r, this.r*2);
+  vertex(this.r, this.r*2);
+  endShape(CLOSE);
+  pop();
+}
