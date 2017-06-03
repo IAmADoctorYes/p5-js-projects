@@ -1,0 +1,78 @@
+var resolution = 25;
+var r = 0.001;
+var v = [];
+
+function setup() {
+  createCanvas(windowWidth,windowHeight);
+  background(0);
+  for(var i = 0; i < 500; i++) {
+    v.push(new Boid(0,0));
+  }
+  show();
+}
+
+function draw() {
+  v.map(function(curr) {
+    curr.update();
+    curr.show();
+  });
+}
+
+function show() {
+  stroke(255,10);
+  strokeWeight(2);
+  for(var x = (width/resolution)/2; x < width; x += resolution) {
+    for(var y = (height/resolution)/2; y < height; y += resolution) {
+      push();
+      translate(x,y);
+      rotate(noise(x*r,y*r)*(PI*2));
+      stroke(255,25);
+      line(-resolution/2,0,resolution/2,0);
+      pop();
+    }
+  }
+}
+
+function Boid(x,y) {
+  this.acceleration = createVector(0,0);
+  this.velocity = createVector(random(-1,1),random(-1,1));
+  this.position = createVector(x,y);
+  this.r = 3.0;
+  this.maxspeed = 5;
+  this.maxforce = 0.1;
+}
+
+Boid.prototype.update = function() {
+  this.seek();
+  this.velocity.add(this.acceleration);
+  this.velocity.limit(this.maxspeed);
+  this.position.add(this.velocity);
+  this.acceleration.mult(0);
+  if(this.position.x > width) {
+    this.position.x = 0;
+  } else if (this.position.x < 0) {
+    this.position.x = width;
+  }
+  if(this.position.y > height) {
+    this.position.y = 0;
+  } else if (this.position.y < 0) {
+    this.position.y = height;
+  }
+}
+
+Boid.prototype.seek = function() {
+  var target = createVector(cos(noise(this.position.x*r,this.position.y*r)*(PI*2))*this.maxspeed+this.position.x,
+  sin(noise(this.position.x*r,this.position.y*r)*(PI*2))*this.maxspeed+this.position.y);
+  var desired = p5.Vector.sub(target,this.position);
+  desired.normalize();
+  desired.mult(this.maxspeed);
+  var steer = p5.Vector.sub(desired,this.velocity);
+  steer.limit(this.maxforce);
+  this.acceleration = steer;
+}
+
+Boid.prototype.show = function() {
+  strokeWeight(0);
+  fill(255);
+  ellipse(this.position.x,this.position.y,1,1);
+}
