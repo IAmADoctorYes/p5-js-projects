@@ -1,0 +1,57 @@
+var circles = [];
+var p = 250;
+var fr = 1;
+
+function setup() {
+  createCanvas(windowWidth,windowHeight);
+  background(0);
+  colorMode(HSB);
+  for(var i = 0; i < p; i++) {
+    circles.push(new Circle(createVector(width/2,height/2),((height/2)/p)*(i+1),i));
+  }
+}
+
+function draw() {
+  circles.map(function(curr) {
+    curr.show();
+  });
+  if(frameCount%fr == 0){
+    shuff();
+  }
+}
+
+function Circle(origin,armLength,index) {
+  this.origin = origin;
+  this.armLength = armLength;
+  this.newArmLength = armLength;
+  this.anglese = 0;
+  this.c = (index*10)%355;
+  this.size = 5;
+  this.distance = 0;
+  this.angle = 0;
+  this.temp = 0;
+}
+
+Circle.prototype.show = function() {
+  this.distance = this.newArmLength - this.armLength;
+  this.armLength += this.distance/4;
+  if(Math.abs(this.distance/4) > 1) {
+    this.angle += 0.1;
+  }
+  fill(this.c,100,100);
+  noStroke();
+  ellipse(this.armLength * sin(this.angle)+this.origin.x-this.size,this.armLength * cos(this.angle)+this.origin.y-this.size,this.size,this.size);
+}
+
+function shuff() {
+  var x = floor(random(circles.length));
+  var y = floor(random(circles.length));
+  if (x == y) {
+    while(x == y) {
+      y = floor(random(circles.length));
+    }
+  }
+  var temp = circles[x].armLength;
+  circles[x].newArmLength = circles[y].armLength;
+  circles[y].newArmLength = temp;
+}
