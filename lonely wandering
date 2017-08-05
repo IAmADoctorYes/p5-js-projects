@@ -1,0 +1,76 @@
+var wanderers = [];
+var holes = [];
+var xoff = 0.001;
+var yoff = 0.002;
+var num = 10;
+
+function setup() {
+  createCanvas(windowHeight,windowHeight);
+  background(255)
+  noStroke();
+  for(var i = 0; i < 2; i++) {
+    wanderers.push(new Wanderer(i));
+  }
+  wanderers.push(new Wanderer());
+  for(var x = 0+(width/(num))/2/3; x < width; x += width/num) {
+    for(var y = 0+(height/(num))/2/3; y < height; y += height/num) {
+      holes.push(new Hole(x,y,width/num*0.67,width/num*0.67))
+    }
+  }
+}
+
+function draw() {
+  background(0)
+  holes.map(function(curr){
+    curr.show();
+  });
+  wanderers.map(function(curr){
+    curr.update();
+    curr.show();
+  });
+}
+
+function Hole(x,y,width,height) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.centerX = this.x + (this.width/2)
+  this.centerY = this.y + (this.height/2)
+}
+
+Hole.prototype.show = function() {
+  fill(255);
+  rect(this.x,this.y,this.width,this.height);
+}
+
+function Wanderer(offset) {
+  this.offset = offset;
+  this.x = noise((frameCount+this.offset)*xoff)*width;
+  this.y = noise((frameCount+this.offset)*yoff)*height;
+  this.maxDistance = dist(this.centerX,this.centerY,this.x,this.y);
+  this.osc = new p5.Oscillator();
+  this.osc.setType('sine');
+  this.osc.freq(240);
+  this.osc.amp(0);
+  this.osc.start();
+}
+
+Wanderer.prototype.update = function() {
+  this.x = noise((frameCount+this.offset)*xoff)*width;
+  this.y = noise((frameCount+this.offset)*yoff)*height;
+  for(var i = 0; i < holes.length; i++) {
+    if((this.x > holes[i].x && this.y > holes[i].y) &&
+    (this.x < holes[i].x + holes[i].width && this.y < holes[i].y + holes[i].height)) {
+      this.osc.amp(round((map(dist(this.x,this.y,holes[i].centerX,holes[i].centerY)),0,holes[i].maxDistance,0,0.01)*1000)/1000,0.01);
+      break;
+    } else {
+      this.osc.amp(0,0.01)
+    }
+  }
+}
+
+Wanderer.prototype.show = function() {
+  fill(0);
+  ellipse(this.x,this.y,15,15);
+}
