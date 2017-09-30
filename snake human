@@ -1,0 +1,111 @@
+var foodValue = 2;
+var snake;
+var food;
+var scl = 10;
+
+function setup() {
+  createCanvas(500,500);
+  background(0);
+  colorMode(HSB);
+  snake = new Snake(10);
+  food = new Food();
+  snake.update();
+  snake.show();
+}
+
+function draw() {
+  snake.check();
+  if(frameCount % 5 == 0) {
+    snake.update();
+    snake.show();
+    food.show();
+  }
+}
+
+function Snake(startLength) {
+  this.startLength = startLength
+  this.locations = [[floor(random(width)/scl)*scl,floor(random(height)/scl)*scl]];
+  this.growth = startLength-1;
+  this.direction = [-scl,0];
+}
+
+Snake.prototype.update = function() {
+  if(this.growth == 0) {
+    this.locations.shift();
+  } else {
+    this.growth -= 1;
+  }
+  this.locations.push([this.locations[this.locations.length-1][0]+this.direction[0],this.locations[this.locations.length-1][1]+this.direction[1]]);
+  if(this.locations[this.locations.length-1][0] < 0) {
+    this.locations[this.locations.length-1][0] = width-scl;
+  } else if(this.locations[this.locations.length-1][0] > width) {
+    this.locations[this.locations.length-1][0] = 0;
+  } else if(this.locations[this.locations.length-1][1] < 0) {
+    this.locations[this.locations.length-1][1] = height-scl;
+  } else if(this.locations[this.locations.length-1][1] > height) {
+    this.locations[this.locations.length-1][1] = 0;
+  }
+  if(this.locations[this.locations.length-1][0] == food.location[0] && this.locations[this.locations.length-1][1] == food.location[1]) {
+    this.growth += foodValue;
+    food = new Food();
+  }
+  if(isColliding(this.locations[this.locations.length-1])) {
+    var newSnake = this.locations[this.locations.length-1];
+    this.locations = [newSnake];
+    this.growth = this.startLength-1;
+  }
+}
+
+Snake.prototype.check = function() {
+  if(this.locations.length >= 2) {
+    if(keyIsDown(RIGHT_ARROW) && this.locations[this.locations.length-2][0] != this.locations[this.locations.length-1][0]+scl &&
+    (this.locations[this.locations.length-2][0] != 0 || this.locations[this.locations.length-1][0] == this.locations[this.locations.length-2][0])
+    && (this.locations[this.locations.length-2][0] != width-scl || this.locations[this.locations.length-1][0] == this.locations[this.locations.length-2][0])) {
+      this.direction = [scl,0]
+    } else if(keyIsDown(LEFT_ARROW) && this.locations[this.locations.length-2][0] != this.locations[this.locations.length-1][0]-scl &&
+    (this.locations[this.locations.length-1][0] != 0 || this.locations[this.locations.length-1][0] == this.locations[this.locations.length-2][0])
+    && (this.locations[this.locations.length-1][0] != width-scl || this.locations[this.locations.length-1][0] == this.locations[this.locations.length-2][0])) {
+      this.direction = [-scl,0]
+    } else if(keyIsDown(UP_ARROW) && this.locations[this.locations.length-2][1] != this.locations[this.locations.length-1][1]-scl &&
+    (this.locations[this.locations.length-1][1] != 0 || this.locations[this.locations.length-1][1] == this.locations[this.locations.length-2][1])
+    && (this.locations[this.locations.length-1][1] != height-scl || this.locations[this.locations.length-1][1] == this.locations[this.locations.length-2][1])) {
+      this.direction = [0,-scl]
+    } else if(keyIsDown(DOWN_ARROW) && this.locations[this.locations.length-2][1] != this.locations[this.locations.length-1][1]+scl &&
+    (this.locations[this.locations.length-1][1] != 0 || this.locations[this.locations.length-1][1] == this.locations[this.locations.length-2][1])
+    && (this.locations[this.locations.length-1][1] != height-scl || this.locations[this.locations.length-1][1] == this.locations[this.locations.length-2][1])) {
+      this.direction = [0,scl]
+    }
+  }
+}
+
+function isColliding(coordinates) {
+  var collide = false;
+  for(var i = 2; i < snake.locations.length; i++) {
+    if(snake.locations[snake.locations.length-i][0] == coordinates[0] &&
+      snake.locations[snake.locations.length-i][1] == coordinates[1]) {
+      collide = true;
+      break;
+    }
+  }
+  return collide;
+}
+
+Snake.prototype.show = function() {
+  background(0);
+  for(var i = 0; i < this.locations.length; i++) {
+    fill((i*10)%355,100,100)
+    rect(this.locations[i][0],this.locations[i][1],scl,scl)
+  }
+}
+
+function Food() {
+  this.location = [floor(random(width)/scl)*scl,floor(random(height)/scl)*scl];
+  if(isColliding(this.location)) {
+    this.location = [floor(random(width)/scl)*scl,floor(random(height)/scl)*scl];
+  }
+}
+
+Food.prototype.show = function() {
+  fill(180,100,75);
+  rect(this.location[0],this.location[1],scl,scl)
+}
