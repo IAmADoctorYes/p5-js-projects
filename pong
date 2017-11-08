@@ -1,0 +1,114 @@
+var p1;
+var p2;
+var b;
+var thicc = 5;
+var space = 15;
+
+function setup() {
+  createCanvas(500,250);
+  background(0);
+  p1 = new Paddle(87,83,createVector(space,height/2));
+  p2 = new Paddle(UP_ARROW,DOWN_ARROW,createVector(width-(space+thicc),height/2));
+  b = new Ball(width/2,height/2,3);
+}
+
+function draw() {
+  background(0);
+  showBoard();
+  p1.run();
+  p2.run();
+  b.run();
+}
+
+function showBoard() {
+  stroke(255);
+  strokeWeight(2);
+  line(width/2,0,width/2,height);
+  fill(255);
+  textSize(32);
+  text(p1.points,width*0.2,space*3)
+  textSize(32);
+  text(p2.points,width*0.73,space*3)
+}
+
+function Paddle(up,down,position) {
+  this.position = position;
+  this.speed = 3;
+  this.length = 50;
+  this.up = up;
+  this.down = down;
+  this.points = 0;
+}
+
+Paddle.prototype.run = function() {
+  this.update();
+  this.show();
+}
+
+Paddle.prototype.update = function() {
+  if(keyIsDown(this.up)) {
+    this.position.y -= this.speed;
+    if(this.position.y-this.length/2 < 0) {
+      this.position.y = this.length/2;
+    }
+  } else if(keyIsDown(this.down)) {
+    this.position.y += this.speed;
+    if(this.position.y+this.length/2 > height) {
+      this.position.y = height-this.length/2;
+    }
+  }
+}
+
+Paddle.prototype.show = function() {
+  fill(255);
+  noStroke();
+  rect(this.position.x,this.position.y-this.length/2,thicc,this.length);
+}
+
+function Ball(x,y,speed) {
+  this.position = createVector(x,y);
+  this.initialSpeed = speed;
+  this.speed = speed;
+  this.velocity = createVector(floor(random(this.speed*2))-this.speed,random(-this.speed,this.speed));
+  this.size = 5;
+}
+
+Ball.prototype.run = function() {
+  this.update();
+  this.show();
+}
+
+Ball.prototype.update = function() {
+  if(this.position.x-this.size/2 < p1.position.x+thicc && abs(this.position.y-p1.position.y) < p1.length/2) {
+    this.velocity.x *= -1;
+    this.speed *= 1.05;
+  } else if(this.position.x+this.size/2 > p2.position.x && abs(this.position.y-p2.position.y) < p2.length/2) {
+    this.velocity.x *= -1;
+    this.speed *= 1.05;
+  } else if(this.position.y-this.size/2 < 0) {
+    this.velocity.y *= -1;
+    this.position.y = this.size/2;
+  }  else if(this.position.y+this.size/2 > height) {
+    this.velocity.y *= -1;
+    this.position.y = height-this.size/2;
+  } else if(this.position.x-this.size/2 < p1.position.x+thicc) {
+    this.position = createVector(width/2,height/2);
+    this.velocity = createVector(random(-this.speed,this.speed),random(-this.speed,this.speed));
+    p2.points += 1;
+    this.speed = this.initialSpeed;
+  } else if(this.position.x+this.size/2 > p2.position.x) {
+    this.position = createVector(width/2,height/2);
+    this.velocity = createVector(random(-this.speed,this.speed),random(-this.speed,this.speed));
+    p1.points += 1;
+    this.speed = this.initialSpeed;
+  }
+  this.velocity.normalize();
+  this.velocity.mult(this.speed);
+  this.position.add(this.velocity);
+}
+
+Ball.prototype.show = function() {
+  fill(255);
+  noStroke();
+  rect(this.position.x-this.size/2,this.position.y-this.size/2,this.size,this.size);
+}
