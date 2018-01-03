@@ -1,0 +1,73 @@
+var livePoints = [];
+var deadPoints = [];
+var minDistance = 10;
+var maxDistance = 15;
+
+function setup() {
+  createCanvas(windowWidth,windowHeight);
+  background(0);
+  livePoints.push([width/2,height/2]);
+}
+
+function draw() {
+  for(var i = 0; i < 10; i++) {
+    newPoint();
+  }
+  show();
+}
+
+function newPoint() {
+  var originIndex = floor(random()*livePoints.length);
+  var origin = livePoints[originIndex];
+  var found = true;
+  var rAngle = random(360);
+  var rDist = random(maxDistance-minDistance) + minDistance;
+  var position = [origin[0]+cos(rAngle)*rDist,origin[1]+sin(rAngle)*rDist];
+  if(isIntersecting(position) || position[0] > width || position[0] < 0 || position[1] > height || position[1] < 0) {
+    found = false
+    for(var i = 0; i < 30; i++) {
+      rAngle = random(360);
+      position = [origin[0]+cos(rAngle)*rDist,origin[1]+sin(rAngle)*rDist];
+      if(!isIntersecting(position) && position[0] < width && position[0] > 0 && position[1] < height && position[1] > 0) {
+        livePoints.push(position);
+        found = true;
+        break;
+      }
+    }
+  } else {
+    livePoints.push(position);
+  }
+  if(found == false) {
+    livePoints.splice(originIndex,1);
+    deadPoints.push(origin);
+  }
+}
+
+function isIntersecting(position) {
+  var intersecting = false;
+  for(var i = 0; i < livePoints.length; i++) {
+    if(dist(position[0],position[1],livePoints[i][0],livePoints[i][1]) < minDistance) {
+      intersecting = true;
+    }
+  }
+    for(var i = 0; i < deadPoints.length; i++) {
+      if(dist(position[0],position[1],deadPoints[i][0],deadPoints[i][1]) < minDistance) {
+        intersecting = true;
+      }
+    }
+  return intersecting;
+}
+
+function show() {
+  background(0);
+  for(var i = 0; i < livePoints.length; i++) {
+    fill(255);
+    noStroke();
+    ellipse(livePoints[i][0],livePoints[i][1],5,5);
+  }
+  for(var i = 0; i < deadPoints.length; i++) {
+    fill(100);
+    noStroke();
+    ellipse(deadPoints[i][0],deadPoints[i][1],5,5);
+  }
+}
